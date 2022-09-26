@@ -13,6 +13,16 @@ int main() {
 	pInputs[1].type = INPUT_MOUSE;
 	pInputs[1].mi.dwFlags = MOUSEEVENTF_LEFTUP;
 
+	// nanosleep
+	struct timespec tim, tim2;
+
+	printf("frequency (clicks/s)? ");
+	int freq;
+	scanf("%d", &freq);
+	float interval = (float) 1/freq;
+	tim.tv_sec = (int) interval;
+	tim.tv_nsec = (interval - (int) interval) * 1000000000;	
+
 	// prompt timer or indefinite mode 
 	printf("should the autoclicker go indefinitely or be on a timer (0 for indefinite, 1 for timer)? ");
 	int choice;
@@ -22,9 +32,10 @@ int main() {
 		// simulated lmb presses
 		printf("\nstarting autoclicker, ctrl + alt + del if you want to kill early\n");
 		while (1) {
+			nanosleep(&tim, &tim2);
 			UINT uSent = SendInput(2, pInputs, sizeof(INPUT));
 		}
-	} else {
+	} else if (choice == 1) {
 		printf("how much time (seconds)? ");
 		int sec;
 		scanf("%d", &sec);
@@ -33,6 +44,7 @@ int main() {
 		printf("\nstarting autoclicker, ctrl + alt + del if you want to kill early\n");
 		clock_t start = clock();
 		while (1) {
+			nanosleep(&tim, &tim2);
 			UINT uSent = SendInput(2, pInputs, sizeof(INPUT));
 			if (sec <= (clock() - start) / CLOCKS_PER_SEC) {
 				printf("\nbreaking...");
